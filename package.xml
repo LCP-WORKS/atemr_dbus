@@ -3,17 +3,10 @@
   <name>atemr_dbus</name>
   <version>0.0.0</version>
   <description>The atemr_dbus package</description>
-
-  <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <!-- Example:  -->
-  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="ephson@todo.todo">ephson</maintainer>
-
-
-  <!-- One license tag required, multiple allowed, one license per tag -->
-  <!-- Commonly used license strings: -->
-  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <maintainer email="leocorp96@gmail.com">ephson</maintainer>
+  <license>MIT</license>
+  <url type="repository">git@github.com:LCP-WORKS/atemr_dbus.git</url>
+  <author email="leocorp96@gmail.com">ephson</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
@@ -28,10 +21,6 @@
   <exec_depend>sdbus-c++-tools</exec_depend>
   <exec_depend>atemr_msgs</exec_depend>
 
-
-  <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <!-- Other tools can request additional information be placed here -->
-
   </export>
 </package>

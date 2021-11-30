@@ -4,6 +4,8 @@
 #include <atemr_dbus/network_access.h>
 #include <atemr_dbus/system_access.h>
 #include <ros/ros.h>
+#include <boost/bind.hpp>
+#include <atemr_msgs/DBUSService.h>
 
 namespace dbus
 {
@@ -13,10 +15,15 @@ namespace dbus
     DBUSAccessor(const ros::NodeHandle &nh);
     ~DBUSAccessor(){}
 
+    bool dbusServe(atemr_msgs::DBUSServiceRequest &, atemr_msgs::DBUSServiceResponse &);
+
   private:
     std::string snm_serviceName_, snm_objectPath_, slgn_serviceName_, slgn_objectPath_,
-                swlan_iface_;
+                swlan_iface_, sip_address_;
     ros::NodeHandle nh_;
+    ros::ServiceServer dbus_srvr_;
+    boost::shared_ptr<NetworkManagerProxy> nmProxy_;
+    boost::shared_ptr<LoginProxy> lgnProxy_;
   };
 }
 

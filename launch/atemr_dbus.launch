@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="wlan_interface" value="wlp0s20f3"/>
+  <node name="dbus_node" pkg="atemr_dbus" type="atemr_dbus_node" output="screen"/>
+</launch>

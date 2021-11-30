@@ -38,6 +38,7 @@ public:
       //! sleep 10 secs
       std::this_thread::sleep_for(10s);
     }
+    wireless_iface_ = iface;
   }
 
   ~NetworkManagerProxy()
@@ -113,6 +114,40 @@ public:
     if(settings_proxy_ != nullptr)
       settings_proxy_->callMethod("Delete").onInterface("org.freedesktop.NetworkManager.Settings.Connection");
   }
+
+  std::string getIPAddress()
+  {
+    std::string ipAddress="0.0.0.0";
+    struct ifaddrs *interfaces = nullptr;
+    struct ifaddrs *temp_addr = nullptr;
+    int success = 0;
+    // retrieve the current interfaces - returns 0 on success
+    success = getifaddrs(&interfaces);
+    if (success == 0)
+    {
+      // Loop through linked list of interfaces
+      temp_addr = interfaces;
+      while(temp_addr != nullptr) {
+        if(temp_addr->ifa_addr->sa_family == AF_INET) {
+          // Check if interface is en0 which is the wifi connection on the iPhone
+          if((strcmp(temp_addr->ifa_name, "en0") == 0) || (strcmp(temp_addr->ifa_name, wireless_iface_.c_str()) == 0)){
+            ipAddress=inet_ntoa(((struct sockaddr_in*)temp_addr->ifa_addr)->sin_addr);
+          }
+        }
+        temp_addr = temp_addr->ifa_next;
+      }
+    }
+    // Free memory
+    freeifaddrs(interfaces);
+    return ipAddress;
+  }
+
+  bool isConnected()
+  {
+    CheckConnectivity();
+    return (State() == NM_STATE_CONNECTED_GLOBAL);
+  }
+
 protected:
   sdbus::ObjectPath device_getAccessPoint(const std::string &target_ssid)
   {
@@ -165,7 +200,7 @@ protected:
     CheckConnectivity();
     if(State() == NM_STATE_CONNECTED_GLOBAL)
     {//! instantiate proxies
-      std::cout << "Confirming SSID" << std::endl;
+      //std::cout << "Confirming SSID" << std::endl;
       conn_proxy_ = sdbus::createProxy(service_name_, active_conn_path);
       std::string cur_ssid = conn_proxy_->getProperty("Id")
           .onInterface("org.freedesktop.NetworkManager.Connection.Active");
@@ -205,38 +240,11 @@ protected:
     return found;
   }
 
-  std::string getIPAddress()
-  {
-    std::string ipAddress="No IP";
-    struct ifaddrs *interfaces = nullptr;
-    struct ifaddrs *temp_addr = nullptr;
-    int success = 0;
-    // retrieve the current interfaces - returns 0 on success
-    success = getifaddrs(&interfaces);
-    if (success == 0)
-    {
-      // Loop through linked list of interfaces
-      temp_addr = interfaces;
-      while(temp_addr != nullptr) {
-        if(temp_addr->ifa_addr->sa_family == AF_INET) {
-          // Check if interface is en0 which is the wifi connection on the iPhone
-          if((strcmp(temp_addr->ifa_name, "en0") == 0) || (strcmp(temp_addr->ifa_name, "wlp0s20f3") == 0)){
-            ipAddress=inet_ntoa(((struct sockaddr_in*)temp_addr->ifa_addr)->sin_addr);
-          }
-        }
-        temp_addr = temp_addr->ifa_next;
-      }
-    }
-    // Free memory
-    freeifaddrs(interfaces);
-    return ipAddress;
-  }
-
 private:
   std::unique_ptr<sdbus::IProxy> ap_proxy_, conn_proxy_, settings_proxy_;
   std::shared_ptr<sdbus::IProxy> device_proxy_;
   sdbus::ObjectPath device_path_;
-  std::string service_name_;
+  std::string service_name_, wireless_iface_;
 };
 
 #endif // NETWORK_ACCESS_H
