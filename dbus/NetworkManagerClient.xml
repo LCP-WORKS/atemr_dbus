@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE busconfig PUBLIC
+ "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<node name="/org/freedesktop/NetworkManager">
+  <interface name="org.freedesktop.NetworkManager">
+    <method name="AddAndActivateConnection">
+      <arg type="a{sa{sv}}" name="setting" direction="in"/>
+      <arg type="o" name="device" direction="in"/>
+      <arg type="o" name="specific_object" direction="in"/>
+      
+      <arg type="o" name="path" direction="out"/>
+      <arg type="o" name="active_connection" direction="out"/>
+    </method>
+    <method name="ActivateConnection">
+      <arg type="o" name="connection" direction="in"/>
+      <arg type="o" name="device" direction="in"/>
+      <arg type="o" name="specific_object" direction="in"/>
+
+      <arg type="o" name="active_connection" direction="out"/>
+    </method>
+    <method name="GetDeviceByIpIface">
+      <arg type="s" name="iface" direction="in"/>      
+      <arg type="o" name="device" direction="out"/>
+    </method>
+    <method name="CheckConnectivity">
+      <arg type="u" name="connectivity" direction="out"/>
+    </method>
+
+    <property name="WirelessEnabled" type="b" access="readwrite"/>
+    <property name="ActiveConnections" type="ao" access="read"/>
+    <property name="PrimaryConnection" type="o" access="read"/>
+    <property name="State" type="u" access="read"/>
+  </interface>
+  
+  <interface name="org.freedesktop.DBus.Properties">
+    <method name="Get">
+      <arg type="s" name="interface_name" direction="in"/>
+      <arg type="s" name="property_name" direction="in"/>      
+      <arg type="v" name="value" direction="out"/>
+    </method>
+    <method name="Set">
+      <arg type="s" name="interface_name" direction="in"/>
+      <arg type="s" name="property_name" direction="in"/>      
+      <arg type="v" name="value" direction="in"/>
+    </method>
+  </interface>
+  
+</node>

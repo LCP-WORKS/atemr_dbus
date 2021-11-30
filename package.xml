@@ -19,12 +19,14 @@
   <build_depend>roscpp</build_depend>
   <build_depend>sdbus-c++</build_depend>
   <build_depend>sdbus-c++-tools</build_depend>
+  <build_depend>atemr_msgs</build_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>sdbus-c++</build_export_depend>
   <build_export_depend>sdbus-c++-tools</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>sdbus-c++</exec_depend>
   <exec_depend>sdbus-c++-tools</exec_depend>
+  <exec_depend>atemr_msgs</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE busconfig PUBLIC
+ "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<node name="/org/freedesktop/login1">
+  <interface name="org.freedesktop.login1.Manager">
+    <method name="PowerOff">
+      <arg type="b" name="arg_0" direction="in"/>
+    </method>
+    <method name="Reboot">
+      <arg type="b" name="arg_0" direction="in"/>
+    </method>
+    <method name="CanPowerOff">
+      <arg type="s" name="arg_0" direction="out"/>
+    </method>
+    <method name="CanReboot">
+      <arg type="s" name="arg_0" direction="out"/>
+    </method>
+  </interface>
+  
+</node>
