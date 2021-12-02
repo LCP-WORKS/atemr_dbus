@@ -6,7 +6,7 @@ int main(int argc, char **argv)
   ros::NodeHandle g_nh("");
   dbus::DBUSAccessor accessor(g_nh);
 
-  ros::Rate r(30);
+  ros::Rate r(15);
   while(ros::ok() && !ros::isShuttingDown())
   {
     ROS_INFO_ONCE("DBUS node running ...");

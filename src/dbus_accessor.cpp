@@ -9,9 +9,9 @@ namespace dbus
     slgn_serviceName_ = "org.freedesktop.login1";
     slgn_objectPath_ = "/org/freedesktop/login1";
 
-    nh_.param<std::string>("/wlan_interface", swlan_iface_, "wlp0s20f3");
+    nh_.param<std::string>("~wlan_interface", swlan_iface_, "wlan0");
     dbus_srvr_ = nh_.advertiseService<atemr_msgs::DBUSServiceRequest, atemr_msgs::DBUSServiceResponse>
-        ("SystemAccessServer", boost::bind(&DBUSAccessor::dbusServe, this, _1, _2));
+        ("DBUSServer", boost::bind(&DBUSAccessor::dbusServe, this, _1, _2));
     nmProxy_.reset(new NetworkManagerProxy(swlan_iface_, snm_serviceName_, snm_objectPath_));
     lgnProxy_.reset(new LoginProxy(slgn_serviceName_, slgn_objectPath_));
   }
