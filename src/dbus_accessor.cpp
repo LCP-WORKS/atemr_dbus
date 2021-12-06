@@ -33,8 +33,8 @@ namespace dbus
     if(req.queryConnection.data)
        res.isConnected.data = nmProxy_->isConnected();
 
-    if(req.triggerPowerOFF.data)
-      lgnProxy_->PowerOff(true);
+    if(req.triggerPowerOFF.data)//! return true, wait 3s and initiate shutdown procedures.
+      bshutdown_triggered_ = true;
 
     return true;
   }

@@ -6,6 +6,7 @@
 #include <ros/ros.h>
 #include <boost/bind.hpp>
 #include <atemr_msgs/DBUSService.h>
+#include <boost/atomic.hpp>
 
 namespace dbus
 {
@@ -16,10 +17,13 @@ namespace dbus
     ~DBUSAccessor(){}
 
     bool dbusServe(atemr_msgs::DBUSServiceRequest &, atemr_msgs::DBUSServiceResponse &);
+    boost::atomic_bool &isShutDown(){ return bshutdown_triggered_; }
+    void shutDown(){ lgnProxy_->PowerOff(true); }
 
   private:
     std::string snm_serviceName_, snm_objectPath_, slgn_serviceName_, slgn_objectPath_,
                 swlan_iface_, sip_address_;
+    boost::atomic_bool bshutdown_triggered_{false};
     ros::NodeHandle nh_;
     ros::ServiceServer dbus_srvr_;
     boost::shared_ptr<NetworkManagerProxy> nmProxy_;

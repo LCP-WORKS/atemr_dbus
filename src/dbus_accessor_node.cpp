@@ -10,9 +10,19 @@ int main(int argc, char **argv)
   while(ros::ok() && !ros::isShuttingDown())
   {
     ROS_INFO_ONCE("DBUS node running ...");
+    if(accessor.isShutDown())
+    {
+      ROS_INFO_ONCE("DBUS node - preparing to shutdown system");
+      //! 1- wait a few seconds (3 s)
+      std::this_thread::sleep_for(3s);
+      //! 2- break loop
+      break;
+    }
     ros::spinOnce();
     r.sleep();
   }
+  if(accessor.isShutDown())//! 3- initiate shutdown
+    accessor.shutDown();
 
   return 0;
 }
