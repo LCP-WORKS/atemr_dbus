@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
   <node name="dbus_node" pkg="atemr_dbus" type="atemr_dbus_node" output="screen">
-    <param name="wlan_interface" value="wlp0s20f3"/>
+    <param name="wlan_interface" value="wlp0s20f3"/> wlp0s20f3 enp7s0
   </node>
 </launch>

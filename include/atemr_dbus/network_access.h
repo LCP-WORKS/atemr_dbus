@@ -12,6 +12,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <atemr_dbus/nm-glue.h>
+#include <atemr_dbus/atemr_exception.h>
 
 #define NM_ACTIVE_CONNECTION_STATE_ACTIVATED 2
 #define NM_STATE_CONNECTED_GLOBAL 70
@@ -29,8 +30,12 @@ public:
     service_name_ = destination;
     registerProxy();
 
-    device_path_ = GetDeviceByIpIface(iface);
-    device_proxy_ = sdbus::createProxy(service_name_, device_path_);
+    try {
+      device_path_ = GetDeviceByIpIface(iface);
+      device_proxy_ = sdbus::createProxy(service_name_, device_path_);
+    } catch (sdbus::Error &err) {
+      ATEMR_EXCP(0000, err.what());
+    }
     //! enable wireless if not enabled
     if(!WirelessEnabled())
     {
@@ -69,11 +74,11 @@ public:
       };
       std::tuple<sdbus::ObjectPath, sdbus::ObjectPath> conn_res = AddAndActivateConnection(connection_params,
                                                                                            device_path_, ap_obj_path);
-      //! wait for connection to become active
+
       conn_proxy_ = sdbus::createProxy(service_name_, std::get<1>(conn_res));
       settings_proxy_ = sdbus::createProxy(service_name_, std::get<0>(conn_res));
     }
-
+    //! wait for connection to become active
     int cnt = 30;
     try
     {
@@ -148,6 +153,19 @@ public:
     return (State() == NM_STATE_CONNECTED_GLOBAL);
   }
 
+  std::string getCurrentSSID()
+  {
+    sdbus::ObjectPath active_conn_path = PrimaryConnection();
+    CheckConnectivity();
+    if(State() == NM_STATE_CONNECTED_GLOBAL)
+    {//! instantiate proxies
+      conn_proxy_ = sdbus::createProxy(service_name_, active_conn_path);
+      return conn_proxy_->getProperty("Id")
+          .onInterface("org.freedesktop.NetworkManager.Connection.Active");
+    }
+    return std::string();
+  }
+
 protected:
   sdbus::ObjectPath device_getAccessPoint(const std::string &target_ssid)
   {
@@ -196,21 +214,13 @@ protected:
 
   bool checkExistingConnection(std::shared_ptr<sdbus::IProxy> device_proxy, const std::string &target_ssid)
   {
-    sdbus::ObjectPath active_conn_path = PrimaryConnection();
-    CheckConnectivity();
-    if(State() == NM_STATE_CONNECTED_GLOBAL)
+    std::string cur_ssid = getCurrentSSID();
+    if(!cur_ssid.empty() && (cur_ssid == target_ssid))
     {//! instantiate proxies
-      //std::cout << "Confirming SSID" << std::endl;
-      conn_proxy_ = sdbus::createProxy(service_name_, active_conn_path);
-      std::string cur_ssid = conn_proxy_->getProperty("Id")
+      sdbus::ObjectPath settings_path = conn_proxy_->getProperty("Connection")
           .onInterface("org.freedesktop.NetworkManager.Connection.Active");
-      if(cur_ssid == target_ssid)
-      {
-        sdbus::ObjectPath settings_path = conn_proxy_->getProperty("Connection")
-            .onInterface("org.freedesktop.NetworkManager.Connection.Active");
-        settings_proxy_ = sdbus::createProxy(service_name_, settings_path);
-        return true;
-      }
+      settings_proxy_ = sdbus::createProxy(service_name_, settings_path);
+      return true;
     }
 
     std::cout << "Checking for existing connection ..." << std::endl;
