@@ -5,6 +5,9 @@
 #include <string>
 #include <exception>
 
+#define DBUS_ERROR 0000
+#define FL_ENGINE_ERROR 0010
+
 #define ATEMR_EXCP(code, msg) throw ATEMRException(code, msg, __FILE__, __LINE__)
 
 class ATEMRException : public std::exception

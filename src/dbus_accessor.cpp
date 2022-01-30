@@ -12,11 +12,12 @@ namespace dbus
     p_nh_.param<std::string>("wlan_interface", swlan_iface_, "wlan0");
     dbus_srvr_ = nh_.advertiseService<atemr_msgs::DBUSServiceRequest, atemr_msgs::DBUSServiceResponse>
         ("DBUSServer", boost::bind(&DBUSAccessor::dbusServe, this, _1, _2));
-    try {
+    try
+    {
       nmProxy_.reset(new NetworkManagerProxy(swlan_iface_, snm_serviceName_, snm_objectPath_));
       lgnProxy_.reset(new LoginProxy(slgn_serviceName_, slgn_objectPath_));
     } catch (ATEMRException &e) {
-      if(e.code() == 0)
+      if(e.code() == DBUS_ERROR)
       {
         ROS_ERROR_STREAM("Unable to instantiate DBUS node | " << e.code() << " | " << e.what());
         exit(-1);

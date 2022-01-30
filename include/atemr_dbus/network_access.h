@@ -34,7 +34,7 @@ public:
       device_path_ = GetDeviceByIpIface(iface);
       device_proxy_ = sdbus::createProxy(service_name_, device_path_);
     } catch (sdbus::Error &err) {
-      ATEMR_EXCP(0000, err.what());
+      ATEMR_EXCP(DBUS_ERROR, err.what());
     }
     //! enable wireless if not enabled
     if(!WirelessEnabled())
