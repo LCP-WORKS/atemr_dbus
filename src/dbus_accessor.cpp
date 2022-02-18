@@ -43,7 +43,10 @@ namespace dbus
     if(req.queryConnection.data)
        res.isConnected.data = nmProxy_->isConnected();
 
-    if(req.triggerPowerOFF.data)//! return true, wait 3s and initiate shutdown procedures.
+    if(req.triggerRestart.data)//! return true, wait 8s and initiate shutdown procedures.
+      breboot_triggered_ = true;
+
+    if(req.triggerPowerOFF.data)//! return true, wait 8s and initiate shutdown procedures.
       bshutdown_triggered_ = true;
 
     return true;

@@ -28,17 +28,19 @@ int main(int argc, char **argv)
     }
 
     //! SHUTDOWN request processing
-    if(accessor.isShutDown())
+    if(accessor.isShutDown() || accessor.isReboot())
     {
-      ROS_INFO_ONCE("DBUS node - preparing to shutdown system");
-      //! 1- wait a few seconds (3 s)
-      std::this_thread::sleep_for(3s);
+      ROS_INFO_ONCE("DBUS node - preparing to shutdown (restart) system");
+      //! 1- wait a few seconds (8 s)
+      std::this_thread::sleep_for(8s);
       //! 2- break loop
       break;
     }
     ros::spinOnce();
     r.sleep();
   }
+  if(accessor.isReboot())//! 3- initiate shutdown
+    accessor.reboot();
   if(accessor.isShutDown())//! 3- initiate shutdown
     accessor.shutDown();
 
